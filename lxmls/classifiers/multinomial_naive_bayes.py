@@ -3,7 +3,9 @@ import scipy as scipy
 import lxmls.classifiers.linear_classifier as lc
 import sys
 from lxmls.distributions.gaussian import *
+from itertools import izip
 
+eps = 0.001
 
 class MultinomialNaiveBayes(lc.LinearClassifier):
 
@@ -18,29 +20,36 @@ class MultinomialNaiveBayes(lc.LinearClassifier):
     def train(self,x,y):
         # n_docs = no. of documents
         # n_words = no. of unique words    
-        n_docs,n_words = x.shape
+        n_docs, n_words = x.shape
         
         # classes = a list of possible classes
         classes = np.unique(y)
         # n_classes = no. of classes
         n_classes = np.unique(y).shape[0]
         
-        # initialization of the prior and likelihood variables
-        prior = np.zeros(n_classes)
-        likelihood = np.zeros((n_words,n_classes))
+        # prior[0] is the prior probability of a document being of class 0
+        prior = np.ones(n_classes)  # add one smoothing
+        for c in y:
+            prior[c] += 1
+        prior = prior / np.sum(prior)
+        assert np.abs(np.sum(prior) - 1) < eps
 
-        # TODO: This is where you have to write your code!
-        # You need to compute the values of the prior and likelihood parameters
-        # and place them in the variables called "prior" and "likelihood".
-        # Examples:
-            # prior[0] is the prior probability of a document being of class 0
-            # likelihood[4, 0] is the likelihood of the fifth(*) feature being 
-            # active, given that the document is of class 0
-            # (*) recall that Python starts indices at 0, so an index of 4 
-            # corresponds to the fifth feature!
         
-        # Complete Exercise 1.1 
-        raise NotImplementedError, "Complete Exercise 1.1" 
+        # likelihood[4, 0] is the likelihood of the fifth(*) feature being 
+        # active, given that the document is of class 0
+        # (*) recall that Python starts indices at 0, so an index of 4 
+        # corresponds to the fifth feature!
+        likelihood = np.ones((n_words,n_classes))  # add one smoothing
+        # compute counts
+        for doc_i, [c] in izip(range(n_docs), y):
+            for w in x[doc_i]:
+                likelihood[w, c] += 1 
+        # normalize in respect to class
+        for class_i in range(likelihood.shape[1]):
+            class_occ = np.sum(likelihood[:, class_i])
+            likelihood[:, class_i] /= float(class_occ)
+
+        assert np.abs(np.sum(likelihood[:,0]) - 1) < eps
 
         params = np.zeros((n_words+1,n_classes))
         for i in xrange(n_classes):
