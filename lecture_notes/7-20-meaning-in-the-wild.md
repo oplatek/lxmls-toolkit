@@ -46,7 +46,7 @@ Ontologies as abstraction?
 --------------------------
 - current ontologies e.g. schema.org are very sparse, and not intuitive for people 
     - people do not abstract according schema.org
-        - framenet may be better
+        - framenet may be better or even Wordnet?
     - in order to traverse ontologies one should find much more dimension to traverse them than through current ontologies
 - ontologies may be used as priors
     - many different ontologies should be combines for priors
