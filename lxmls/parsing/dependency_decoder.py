@@ -50,9 +50,15 @@ class DependencyDecoder():
         '''
         Parse using Eisner's algorithm.
         '''
+        nr, nc = np.shape(scores)
+        if nr != nc:
+            raise ValueError("scores must be a squared matrix with nw+1 rows")
+            return []
 
-        # Complete Exercise 4.3.6 
-        raise NotImplementedError, "Complete Exercise 4.3.6" 
+        nw = nr - 1;
+        heads = np.zeros(nw+1, int)
+        backtrack_eisner(     , heads)
+        return heads
 
     def backtrack_eisner(self, incomplete_backtrack, complete_backtrack, s, t, direction, complete, heads):
         '''
